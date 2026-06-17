@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Bookings | UniEvent Secure Admin</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            min-height: 100vh;
+            color: #1e293b;
+        }
+
+        .navbar-custom {
+            background-color: #0f172a;
+            padding: 15px 0;
+        }
+
+        .page-title {
+            font-weight: 700;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+        }
+
+        .ledger-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+            overflow: hidden;
+        }
+
+        .table {
+            margin-bottom: 0;
+            vertical-align: middle;
+        }
+
+        .table thead th {
+            background-color: #f8fafc;
+            color: #475569;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            padding: 16px 24px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .table tbody td {
+            padding: 16px 24px;
+            color: #334155;
+            font-size: 0.95rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .student-profile-text {
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .student-email-sub {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .event-title-link {
+            font-weight: 500;
+            color: #0a2d6d;
+        }
+
+        .status-badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 30px;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .status-confirmed {
+            background-color: #f0fdf4;
+            color: #16a34a;
+        }
+
+        .status-pending {
+            background-color: #fffbeb;
+            color: #d97706;
+        }
+
+        .status-cancelled {
+            background-color: #fef2f2;
+            color: #dc2626;
+        }
+
+        .admin-badge {
+            font-size: 0.75rem;
+            background-color: #dc2626;
+            color: #ffffff;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark navbar-custom shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fw-bold text-white d-flex align-items-center gap-2" href="/admin">
+            UniEvent<span class="text-info">Secure</span>
+            <span class="admin-badge">Admin </span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <div class="navbar-nav ms-auto gap-2">
+                <a class="nav-link text-white-50" href=" /admin">Admin Home</a>
+                <a class="nav-link text-white-50" href="/events/create">Create Event</a>
+                <a class="nav-link text-white-50" href="/admin/events">Manage Events</a>
+                <a class="nav-link active text-white" href="/admin/bookings">View Bookings</a>
+                <a class="nav-link text-warning fw-semibold" href="/logout">Logout</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5 mb-5">
+
+    <div class="mb-4">
+        <h2 class="page-title mb-1">All Bookings</h2>
+        <p class="text-muted small">View and manage student bookings, registration details, and event participation records.</p>
+    </div>
+
+    <div class="card ledger-card">
+        <% if (locals.bookings && bookings.length > 0) { %>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%;">Student </th>
+                            <th style="width: 20%;">Email Address</th>
+                            <th style="width: 25%;"> Event Session</th>
+                            <th style="width: 15%;"> Status</th>
+                            <th style="width: 15%;">Time & Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% bookings.forEach(booking => { %>
+                            <tr>
+                                <td class="student-profile-text">
+                                    <%= booking.name %>
+                                </td>
+
+                                <td class="student-email-sub font-monospace">
+                                    <%= booking.email %>
+                                </td>
+
+                                <td class="event-title-link">
+                                    <%= booking.title %>
+                                </td>
+
+                                <td>
+                                    <% 
+                                        let normalizedStatus = (booking.status || 'confirmed').toLowerCase();
+                                        let statusClass = 'status-confirmed';
+                                        if (normalizedStatus === 'pending') statusClass = 'status-pending';
+                                        if (normalizedStatus === 'cancelled' || normalizedStatus === 'canceled') statusClass = 'status-cancelled';
+                                    %>
+                                    <span class="status-badge <%= statusClass %>">
+                                        <%= booking.status || 'Confirmed' %>
+                                    </span>
+                                </td>
+
+                                <td class="text-secondary small">
+                                    <%= booking.booking_date %>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        <% } else { %>
+            <div class="text-center py-5">
+                <div class="fs-1 mb-2">🎟️</div>
+                <p class="text-muted small mb-0">No registration transactions have been posted to the database lines yet.</p>
+            </div>
+        <% } %>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
