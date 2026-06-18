@@ -1,3 +1,4 @@
+require('dotenv').config();
 function isAdmin(req, res, next) {
 
     if (!req.session.userId) {
